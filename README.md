@@ -1,27 +1,24 @@
-# Kelompok 3 
-# RPL-Hub 💻
-**Mini Project CRUD - Manajemen Data Jurusan RPL (XI RPL 1)**
+# SIM-LAB (Sistem Informasi & Penjadwalan Lab)
 
-RPL-Hub adalah aplikasi web sederhana yang dirancang untuk mengelola data operasional di jurusan Rekayasa Perangkat Lunak (RPL). Aplikasi ini dibangun untuk memenuhi tugas Mini Project Web Development dengan menerapkan konsep CRUD (Create, Read, Update, Delete).
+Aplikasi CRUD sederhana berbasis PHP & MySQL buat ngatur jadwal pemakaian lab komputer di sekolah biar kaga ada jadwal yang bentrok.
 
 ---
 
-## 📋 Tema & Entitas Data
-Tema Project: **7. Jurusan RPL**
-Aplikasi ini mengelola 2 entitas data utama:
-1. **Data Akademik Siswa:** Mengelola profil siswa RPL beserta fokus peminatan keahlian seperti(Web/Mobile/UI-UX).
-2. **Data Inventaris Lab:** Mengelola pencatatan aset perangkat keras di laboratorium komputer jurusan.
+## Fitur
+- **Cek Bentrok:** Otomatis nolak kalau ada ruangan, hari, sama jam yang sama yang mau dibooking 2x.
+- **Data Guru:** Tambah, lihat, edit, hapus data guru.
+- **Data Kelas:** Kelola data kelas.
+- **Jadwal Lab:** Atur jadwal pemakaian lab.
 
 ---
 
-## Fitur Aplikasi
-- **Siswa:**
-  - Tambah Data Siswa Baru
-  - Tampilkan Daftar Siswa
-  - Edit Profil & Peminatan Siswa
-  - Hapus Data Siswa
-- **Inventaris Lab:**
-  - Tambah Data Barang Baru
-  - Tampilkan Daftar Inventaris
-  - Edit Kondisi/Data Barang
-  - Hapus Data Barang
+## Struktur DB
+
+Pake 3 tabel (`db_jadwal_lab`):
+- `guru` (id_guru, nama_guru, mata_pelajaran)
+- `kelas` (id_kelas, nama_kelas)
+- `jadwal_lab` (id_jadwal, id_guru, id_kelas, ruang_lab, hari, jam_pelajaran)
+
+
+Link Trello: [https://trello.com/b/rQtQMjyC/project-kelompok-3]
+Link ERD: [https://drive.google.com/file/d/1Io-MEyFweqka55LvvPJUswtD_SHXAiQa/view?usp=sharing]
