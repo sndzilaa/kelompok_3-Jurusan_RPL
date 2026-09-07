@@ -1,0 +1,19 @@
+<?php 
+$hostname = "localhost";
+$username = "root";
+$password = "";
+$database = "rpl";
+
+
+$koneksi = mysqli_connect($hostname, $username, $password, $database);
+if (!$koneksi) {
+    die("Koneksi database gagal: " . mysqli_connect_error());
+}
+
+if ($koneksi) {
+    echo "Koneksi database berhasil";
+}
+else {
+    echo "Koneksi database gagal";
+}
+?>
