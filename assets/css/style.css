@@ -52,6 +52,7 @@ body {
     min-height: 100vh;
 }
 
+/* Background Top Gradient Effect */
 body::before {
     content: "";
     position: fixed;
@@ -71,6 +72,7 @@ body::before {
     padding: 24px 20px 48px;
 }
 
+/* Header */
 .header-wrapper {
     display: flex;
     justify-content: space-between;
@@ -149,6 +151,7 @@ body::before {
     color: var(--primary);
 }
 
+/* Quick Navigation Links */
 .quick-nav {
     display: flex;
     gap: 10px;
@@ -178,6 +181,7 @@ body::before {
     box-shadow: 0 2px 8px rgba(79, 70, 229, 0.25);
 }
 
+/* Stat Cards */
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -232,6 +236,7 @@ body::before {
 .stat-icon.success { background: var(--success-light); color: var(--success); }
 .stat-icon.warning { background: var(--warning-light); color: var(--warning); }
 
+/* Main Table Card */
 .main-card {
     background: #ffffff;
     border-radius: var(--radius-lg);
@@ -268,6 +273,7 @@ body::before {
     flex-wrap: wrap;
 }
 
+/* Form Controls */
 .search-input {
     padding: 9px 14px;
     font-size: 0.875rem;
@@ -306,6 +312,7 @@ body::before {
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
 }
 
+/* Buttons */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -363,6 +370,7 @@ body::before {
     border-color: #ef4444;
 }
 
+/* Table */
 .table-responsive {
     width: 100%;
     overflow-x: auto;
@@ -410,6 +418,7 @@ body::before {
     text-align: center;
 }
 
+/* Badges */
 .badge {
     display: inline-block;
     padding: 4px 10px;
@@ -457,6 +466,7 @@ body::before {
     gap: 6px;
 }
 
+/* Footer */
 footer {
     margin-top: 32px;
     text-align: center;
