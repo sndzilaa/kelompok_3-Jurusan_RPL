@@ -1,4 +1,4 @@
-<?php 
+<?php
 $hostname = "localhost";
 $username = "root";
 $password = "";
@@ -12,8 +12,6 @@ if (!$koneksi) {
 
 if ($koneksi) {
     echo "Koneksi database berhasil";
-}
-else {
+} else {
     echo "Koneksi database gagal";
 }
-?>
