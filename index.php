@@ -1,6 +1,17 @@
 <?php
 include 'koneksi.php';
 
+$daftar_hari = [
+    "Sunday" => "Minggu",
+    "Monday" => "Senin",
+    "Tuesday" => "Selasa",
+    "Wednesday" => "Rabu",
+    "Thursday" => "Kamis",
+    "Friday" => "Jumat",
+    "Saturday" => "Sabtu"
+];
+$hari_ini = $daftar_hari[date("l")];
+
 $query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, j.ruang_lab, j.hari, j.jam_pelajaran 
           FROM jadwal_lab j
           JOIN guru g ON id_guru = id_guru
