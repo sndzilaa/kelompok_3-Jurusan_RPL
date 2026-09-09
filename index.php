@@ -12,13 +12,24 @@ $daftar_hari = [
 ];
 $hari_ini = $daftar_hari[date("l")];
 
-$query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, j.ruang_lab, j.hari, j.jam_pelajaran 
+$query = "SELECT 
+            j.id_jadwal, 
+            g.nama_guru, 
+            g.mata_pelajaran, 
+            k.nama_kelas, 
+            j.ruang_lab, 
+            j.hari,    
+            j.jam_pelajaran 
           FROM jadwal_lab j
-          JOIN guru g ON id_guru = id_guru
-          JOIN kelas k ON jid_kelas = id_kelas
+          JOIN guru g ON g.id_guru = j.id_guru
+          JOIN kelas k ON k.id_kelas = j.id_kelas
           ORDER BY FIELD(j.hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'), j.jam_pelajaran";
-$conn = mysqli_connect($hostname, $username, $password, $database);
-$result = mysqli_query($conn, $query);
+
+$result = mysqli_query($koneksi, $query);
+
+if (!$result) {
+    die("Query Error: " . mysqli_error($koneksi));
+}
 ?>
 
 <h2>SIM-LAB</h2>
@@ -45,16 +56,16 @@ $result = mysqli_query($conn, $query);
             while ($row = mysqli_fetch_assoc($result)) {
         ?>
                 <tr>
-                    <td><?php echo $no++; ?></td>
-                    <td><?php echo $row['nama_guru']; ?></td>
-                    <td><?php echo $row['mata_pelajaran']; ?></td>
-                    <td><?php echo $row['nama_kelas']; ?></td>
-                    <td><?php echo $row['ruang_lab']; ?></td>
-                    <td><?php echo $row['hari']; ?></td>
-                    <td><?php echo $row['jam_pelajaran']; ?></td>
+                    <td><?= $no++; ?></td>
+                    <td><?= htmlspecialchars($row['nama_guru']); ?></td>
+                    <td><?= htmlspecialchars($row['mata_pelajaran']); ?></td>
+                    <td><?= htmlspecialchars($row['nama_kelas']); ?></td>
+                    <td><?= htmlspecialchars($row['ruang_lab']); ?></td>
+                    <td><?= htmlspecialchars($row['hari']); ?></td>
+                    <td><?= htmlspecialchars($row['jam_pelajaran']); ?></td>
                     <td>
-                        <a href='edit_jadwal.php?id=<?php echo $row['id_jadwal']; ?>' class='btn btn-warning btn-sm'>Edit</a>
-                        <a href='hapus_jadwal.php?id=<?php echo $row['id_jadwal']; ?>' class='btn btn-danger btn-sm' onclick='return confirm("Apakah Anda yakin ingin menghapus jadwal ini?")'>Hapus</a>
+                        <a href='edit_jadwal.php?id=<?= $row['id_jadwal']; ?>' class='btn btn-warning btn-sm'>Edit</a>
+                        <a href='hapus_jadwal.php?id=<?= $row['id_jadwal']; ?>' class='btn btn-danger btn-sm' onclick='return confirm("Apakah Anda yakin ingin menghapus jadwal ini?")'>Hapus</a>
                     </td>
                 </tr>
         <?php
