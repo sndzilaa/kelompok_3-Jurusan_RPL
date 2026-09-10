@@ -10,8 +10,5 @@ if (!$koneksi) {
     die("Koneksi database gagal: " . mysqli_connect_error());
 }
 
-if ($koneksi) {
-    echo "Koneksi database berhasil";
-} else {
-    echo "Koneksi database gagal";
-}
+
+

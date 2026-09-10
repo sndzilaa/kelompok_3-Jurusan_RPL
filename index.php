@@ -61,6 +61,7 @@ $result = mysqli_query($koneksi, $query);
                         <th>Nama Guru</th>
                         <th>Mata Pelajaran</th>
                         <th>Kelas</th>
+                        <th>Tingkatan</th>
                         <th>Ruang Lab</th>
                         <th>Hari</th>
                         <th>Jam</th>
@@ -78,6 +79,7 @@ $result = mysqli_query($koneksi, $query);
                                 <td><?= htmlspecialchars($row['nama_guru']); ?></td>
                                 <td><?= htmlspecialchars($row['mata_pelajaran']); ?></td>
                                 <td><?= htmlspecialchars($row['nama_kelas']); ?></td>
+                                <td><?= htmlspecialchars($row['tingkatan']); ?></td>
                                 <td><?= htmlspecialchars($row['ruang_lab']); ?></td>
                                 <td><?= htmlspecialchars($row['hari']); ?></td>
                                 <td><?= htmlspecialchars($row['jam_pelajaran']); ?></td>
@@ -91,7 +93,7 @@ $result = mysqli_query($koneksi, $query);
                     else:
                         ?>
                         <tr>
-                            <td colspan="8" class="text-center">Belum ada data jadwal laboratorium.</td>
+                            <td colspan="8" class="text-center">Belum ada data jadwal laboratorium yang terdata.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
