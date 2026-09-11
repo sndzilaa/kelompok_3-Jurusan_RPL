@@ -24,12 +24,7 @@ $result = mysqli_query($koneksi, $query);
             <div class="logo-icon"><i class="fa-solid fa-computer"></i></div>
             <span class="logo-text">SIM-LAB</span>
         </div>
-        <div class="navbar-links">
-            <a href="../../index.php">Home</a>
-            <a href="jadwal.php" class="active">Jadwal Lab</a>
-            <a href="../guru/index_guru.php">Guru</a>
-            <a href="../kelas/index_kelas.php">Kelas</a>
-        </div>
+
     </nav>
     <main class="main-container">
         <h1>Jadwal Laboratorium</h1>
