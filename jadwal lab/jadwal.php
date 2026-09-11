@@ -1,5 +1,5 @@
 <?php
-include 'koneksi.php';
+include '../koneksi.php';
 
 $query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, k.tingkatan, j.ruang_lab, j.hari, j.jam_pelajaran 
           FROM jadwal_lab j
@@ -15,7 +15,7 @@ $result = mysqli_query($koneksi, $query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jadwal Lab - SIM-LAB</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
@@ -24,7 +24,16 @@ $result = mysqli_query($koneksi, $query);
             <div class="logo-icon"><i class="fa-solid fa-computer"></i></div>
             <span class="logo-text">SIM-LAB</span>
         </div>
+<<<<<<< HEAD
 
+=======
+        <div class="navbar-links">
+            <a href="../index.php">Home</a>
+            <a href="jadwal.php" class="active">Jadwal Lab</a>
+            <a href="../guru/index_guru.php">Guru</a>
+            <a href="../kelas/index_kelas.php">Kelas</a>
+        </div>
+>>>>>>> 5ddeb53ec4b9f4842bcb9d521d80142ed3ca8c66
     </nav>
     <main class="main-container">
         <h1>Jadwal Laboratorium</h1>

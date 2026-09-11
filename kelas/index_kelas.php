@@ -1,8 +1,9 @@
 <?php
-include 'koneksi.php';
+include '../koneksi.php';
 
 $query = "SELECT * FROM kelas ORDER BY nama_kelas ASC";
 $result = mysqli_query($koneksi, $query);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -11,7 +12,7 @@ $result = mysqli_query($koneksi, $query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data Kelas - SIM-LAB</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
@@ -21,10 +22,10 @@ $result = mysqli_query($koneksi, $query);
             <span class="logo-text">SIM-LAB</span>
         </div>
         <div class="navbar-links">
-            <a href="index.php">Home</a>
-            <a href="keseluruhan/jadwal lab/jadwal.php">Jadwal Lab</a>
-            <a href="index_guru.php">Guru</a>
-            <a href="keseluruhan/kelas/index_kelas.php" class="active">Kelas</a>
+            <a href="../index.php">Home</a>
+            <a href="../jadwal lab/jadwal.php">Jadwal Lab</a>
+            <a href="../guru/index_guru.php">Guru</a>
+            <a href="index_kelas.php" class="active">Kelas</a>
         </div>
     </nav>
     <main class="main-container">
