@@ -57,7 +57,7 @@ $result = mysqli_query($koneksi, $query);
                                 <td><?= htmlspecialchars($row['mata_pelajaran']) ?></td>
                                 <td class="text-center">
                                     <a href="edit_guru.php?id_guru=<?= $row['id_guru']; ?>" class="btn btn-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-                                    <a href="hapus_guru.php?id_guru=<?= $row['id_guru']; ?>" class="btn btn-hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus data guru ini?');"><i class="fa-solid fa-trash"></i> Hapus</a>
+                                    <a href="hapuus_guru.php?id_guru=<?= $row['id_guru']; ?>" class="btn btn-hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus data guru ini?');"><i class="fa-solid fa-trash"></i> Hapus</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>

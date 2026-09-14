@@ -15,6 +15,8 @@ $result = mysqli_query($koneksi, $query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jadwal Lab - SIM-LAB</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
 </head>
 
@@ -24,16 +26,12 @@ $result = mysqli_query($koneksi, $query);
             <div class="logo-icon"><i class="fa-solid fa-computer"></i></div>
             <span class="logo-text">SIM-LAB</span>
         </div>
-<<<<<<< HEAD
-
-=======
         <div class="navbar-links">
             <a href="../index.php">Home</a>
             <a href="jadwal.php" class="active">Jadwal Lab</a>
             <a href="../guru/index_guru.php">Guru</a>
             <a href="../kelas/index_kelas.php">Kelas</a>
         </div>
->>>>>>> 5ddeb53ec4b9f4842bcb9d521d80142ed3ca8c66
     </nav>
     <main class="main-container">
         <h1>Jadwal Laboratorium</h1>
@@ -70,6 +68,16 @@ $result = mysqli_query($koneksi, $query);
                                 <td><?= htmlspecialchars($row['ruang_lab']); ?></td>
                                 <td><?= htmlspecialchars($row['hari']); ?></td>
                                 <td><?= htmlspecialchars($row['jam_pelajaran']); ?></td>
+                                <td class="text-center">
+                                    <a href="edit_jadwal.php?id_jadwal=<?= $row['id_jadwal']; ?>" class="btn btn-edit">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </a>
+                                    <a href="hapus_jadwal.php?id_jadwal=<?= $row['id_jadwal']; ?>"
+                                        class="btn btn-hapus"
+                                        onclick="return confirm('Apakah Anda yakin ingin menghapus jadwal ini?');">
+                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    </a>
+                                </td>
                             </tr>
                         <?php endwhile; ?>
                     <?php else: ?>
