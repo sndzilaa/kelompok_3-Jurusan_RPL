@@ -6,12 +6,12 @@ if (isset($_GET['id_guru'])) {
     $hapus = mysqli_query($koneksi, $query);
 
     if ($hapus) {
-        header("Location: index_guru.php");
+        header("Location: ../index.php");
         exit();
     } else {
         echo "Gagal menghapus data guru: " . mysqli_error($koneksi);
     }
 } else {
-    header("Location: index_guru.php");
+    header("Location: ../index.php");
     exit();
 }

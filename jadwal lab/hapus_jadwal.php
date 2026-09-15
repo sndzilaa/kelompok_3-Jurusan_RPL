@@ -6,12 +6,12 @@ if (isset($_GET['id_jadwal'])) {
     $hapus = mysqli_query($koneksi, $query);
 
     if ($hapus) {
-        header("Location: jadwal.php");
+        header("Location: ../index.php");
         exit();
     } else {
         echo "Gagal menghapus data jadwal: " . mysqli_error($koneksi);
     }
 } else {
-    header("Location: jadwal.php");
+    header("Location: ../index.php");
     exit();
 }

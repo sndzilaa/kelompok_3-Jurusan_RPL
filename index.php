@@ -1,12 +1,11 @@
 <?php
 include 'koneksi.php';
 
-$query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, j.ruang_lab, j.hari, j.jam_pelajaran 
+$query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, k.tingkatan, j.ruang_lab, j.hari, j.jam_mulai, j.jam_selesai 
           FROM jadwal_lab j
           JOIN guru g ON j.id_guru = g.id_guru
           JOIN kelas k ON j.id_kelas = k.id_kelas
-          ORDER BY FIELD(j.hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'), j.jam_pelajaran";
-
+          ORDER BY FIELD(j.hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'), j.jam_mulai ASC";
 $result = mysqli_query($koneksi, $query);
 ?>
 
@@ -60,18 +59,18 @@ $result = mysqli_query($koneksi, $query);
                         <th class="text-center">No</th>
                         <th>Nama Guru</th>
                         <th>Mata Pelajaran</th>
-                        <th>Kelas</th>
+                        <th>Nama Kelas</th>
                         <th>Tingkatan</th>
                         <th>Ruang Lab</th>
                         <th>Hari</th>
-                        <th>Jam</th>
+                        <th>Jam Pelajaran</th>
                         <th class="text-center">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    $no = 1;
-                    if ($result && mysqli_num_rows($result) > 0):
+                    if (mysqli_num_rows($result) > 0):
+                        $no = 1;
                         while ($row = mysqli_fetch_assoc($result)):
                     ?>
                             <tr>
@@ -82,23 +81,21 @@ $result = mysqli_query($koneksi, $query);
                                 <td><?= htmlspecialchars($row['tingkatan']); ?></td>
                                 <td><?= htmlspecialchars($row['ruang_lab']); ?></td>
                                 <td><?= htmlspecialchars($row['hari']); ?></td>
-                                <td><?= htmlspecialchars($row['jam_pelajaran']); ?></td>
+                                <!-- PERBAIKAN: Menampilkan Rentang Jam Ke- -->
+                                <td>Jam ke-<?= $row['jam_mulai']; ?> s/d <?= $row['jam_selesai']; ?></td>
                                 <td class="text-center">
-                                    <a href="jadwal lab/edit_jadwal.php?id=<?= $row['id_jadwal']; ?>" class="btn btn-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-                                    <a href="jadwal lab/hapus_jadwal.php?id=<?= $row['id_jadwal']; ?>" class="btn btn-hapus" onclick="return confirm('Yakin ingin menghapus data ini?')"><i class="fa-solid fa-trash"></i> Hapus</a>
+                                    <a href="jadwal lab/edit_jadwal.php?id_jadwal=<?= $row['id_jadwal']; ?>" class="btn btn-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                                    <a href="jadwal lab/hapus_jadwal.php?id_jadwal=<?= $row['id_jadwal']; ?>" class="btn btn-hapus" onclick="return confirm('Yakin hapus?');"><i class="fa-solid fa-trash"></i> Hapus</a>
                                 </td>
                             </tr>
-                        <?php
-                        endwhile;
-                    else:
-                        ?>
+                        <?php endwhile; ?>
+                    <?php else: ?>
                         <tr>
-                            <td colspan="8" class="text-center">Belum ada data jadwal laboratorium yang terdata.</td>
+                            <td colspan="9" class="text-center">Belum ada data jadwal lab.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
             </table>
-        </div>
     </main>
 
 </body>
