@@ -1,7 +1,5 @@
 <?php
 include '../koneksi.php';
-
-// Ambil data guru dan kelas untuk opsi dropdown
 $query_guru  = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY nama_guru ASC");
 $query_kelas = mysqli_query($koneksi, "SELECT * FROM kelas ORDER BY nama_kelas ASC");
 
@@ -15,26 +13,20 @@ if (isset($_POST['submit'])) {
     $jam_mulai   = (int)$_POST['jam_mulai'];
     $jam_selesai = (int)$_POST['jam_selesai'];
 
-    // 1. Validasi: Jam selesai tidak boleh lebih kecil dari jam mulai
     if ($jam_selesai < $jam_mulai) {
-        $pesan_error = "Jam selesai tidak boleh lebih kecil dari jam mulai!";
+        $pesan_error = "Jam selesai tidak boleh lebih awal dari jam mulai!";
     } else {
-        // 2. Query Cek Bentrok di Database (Format LOWER & TRIM agar tidak terkecoh huruf besar/kecil)
         $query_cek = "SELECT j.*, k.nama_kelas 
-                      FROM jadwal_lab j
-                      JOIN kelas k ON j.id_kelas = k.id_kelas
-                      WHERE LOWER(TRIM(j.ruang_lab)) = LOWER('$ruang_lab') 
-                      AND LOWER(TRIM(j.hari)) = LOWER('$hari') 
-                      AND ('$jam_mulai' <= j.jam_selesai AND '$jam_selesai' >= j.jam_mulai)";
+              FROM jadwal_lab j
+              JOIN kelas k ON j.id_kelas = k.id_kelas
+              WHERE LOWER(TRIM(j.ruang_lab)) = LOWER('$ruang_lab') 
+              AND LOWER(TRIM(j.hari)) = LOWER('$hari')";
 
         $cek_bentrok = mysqli_query($koneksi, $query_cek);
-
-        // 3. Jika ditemukan data bentrok
         if (mysqli_num_rows($cek_bentrok) > 0) {
             $data_bentrok = mysqli_fetch_assoc($cek_bentrok);
             $pesan_error = "Jadwal bentrok! Ruang <b>" . htmlspecialchars($ruang_lab) . "</b> pada hari <b>" . htmlspecialchars($hari) . "</b> sudah terisi oleh kelas <b>" . htmlspecialchars($data_bentrok['nama_kelas']) . "</b> (Jam ke-" . $data_bentrok['jam_mulai'] . " s/d " . $data_bentrok['jam_selesai'] . ").";
         } else {
-            // 4. Jika aman / tidak bentrok, langsung simpan
             $query_simpan = "INSERT INTO jadwal_lab (id_guru, id_kelas, ruang_lab, hari, jam_mulai, jam_selesai) 
                             VALUES ('$id_guru', '$id_kelas', '$ruang_lab', '$hari', '$jam_mulai', '$jam_selesai')";
             $simpan = mysqli_query($koneksi, $query_simpan);

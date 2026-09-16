@@ -1,15 +1,15 @@
 <?php
 include '../koneksi.php';
 
-$query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, k.tingkatan, j.ruang_lab, j.hari, j.jam_pelajaran 
+$query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, k.tingkatan, j.ruang_lab, j.hari, j.jam_mulai, j.jam_selesai 
           FROM jadwal_lab j
           JOIN guru g ON j.id_guru = g.id_guru
           JOIN kelas k ON j.id_kelas = k.id_kelas
-          ORDER BY FIELD(j.hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'), j.jam_pelajaran";
+          ORDER BY FIELD(j.hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'), j.jam_mulai ASC";
 $result = mysqli_query($koneksi, $query);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -51,6 +51,7 @@ $result = mysqli_query($koneksi, $query);
                         <th>Ruang Lab</th>
                         <th>Hari</th>
                         <th>Jam Pelajaran</th>
+                        <th class="text-center">Aksi</th> <!-- PERBAIKAN: Menambahkan TH Aksi -->
                     </tr>
                 </thead>
                 <tbody>
@@ -67,7 +68,8 @@ $result = mysqli_query($koneksi, $query);
                                 <td><?= htmlspecialchars($row['tingkatan']); ?></td>
                                 <td><?= htmlspecialchars($row['ruang_lab']); ?></td>
                                 <td><?= htmlspecialchars($row['hari']); ?></td>
-                                <td><?= htmlspecialchars($row['jam_pelajaran']); ?></td>
+                                <!-- PERBAIKAN: Menampilkan rentang Jam Mulai s/d Jam Selesai -->
+                                <td>Jam ke-<?= htmlspecialchars($row['jam_mulai']); ?> s/d <?= htmlspecialchars($row['jam_selesai']); ?></td>
                                 <td class="text-center">
                                     <a href="edit_jadwal.php?id_jadwal=<?= $row['id_jadwal']; ?>" class="btn btn-edit">
                                         <i class="fa-solid fa-pen-to-square"></i> Edit
@@ -82,7 +84,8 @@ $result = mysqli_query($koneksi, $query);
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="8" class="text-center">Belum ada data jadwal lab yang terdata.</td>
+                            <!-- PERBAIKAN: colspan disesuaikan menjadi 9 sesuai jumlah kolom -->
+                            <td colspan="9" class="text-center">Belum ada data jadwal lab yang terdata.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
