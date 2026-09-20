@@ -1,11 +1,15 @@
 <?php
 include '../koneksi.php';
+include '../auth.php';
+
+// Hanya Guru yang berhak mengakses master data guru
+require_guru('../');
 
 $query = "SELECT * FROM guru ORDER BY nama_guru ASC";
 $result = mysqli_query($koneksi, $query);
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -28,10 +32,33 @@ $result = mysqli_query($koneksi, $query);
             <a href="index_guru.php" class="active">Guru</a>
             <a href="../kelas/index_kelas.php">Kelas</a>
         </div>
+        <div class="navbar-right">
+            <?= render_navbar_user('../'); ?>
+        </div>
     </nav>
     <main class="main-container">
         <h1>Data Guru</h1>
         <div class="card-table">
+            <?php if (isset($_GET['pesan'])): ?>
+                <?php if ($_GET['pesan'] === 'berhasil_tambah'): ?>
+                    <div class="alert alert-success">
+                        <i class="fa-solid fa-circle-check"></i> Data guru berhasil ditambahkan!
+                    </div>
+                <?php elseif ($_GET['pesan'] === 'berhasil_edit'): ?>
+                    <div class="alert alert-success">
+                        <i class="fa-solid fa-circle-check"></i> Data guru berhasil diperbarui!
+                    </div>
+                <?php elseif ($_GET['pesan'] === 'berhasil_hapus'): ?>
+                    <div class="alert alert-success">
+                        <i class="fa-solid fa-circle-check"></i> Data guru berhasil dihapus!
+                    </div>
+                <?php elseif ($_GET['pesan'] === 'tidak_ditemukan'): ?>
+                    <div class="alert alert-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> Data guru tidak ditemukan!
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <div class="header-table">
                 <h2>Daftar Guru</h2>
                 <a href="tambah_guru.php" class="btn btn-tambah"><i class="fa-solid fa-plus"></i> Tambah Data</a>

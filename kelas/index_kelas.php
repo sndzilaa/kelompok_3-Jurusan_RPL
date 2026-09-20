@@ -1,12 +1,15 @@
 <?php
 include '../koneksi.php';
+include '../auth.php';
+
+// Hanya Guru yang berhak mengakses master data kelas
+require_guru('../');
 
 $query = "SELECT * FROM kelas ORDER BY nama_kelas ASC";
 $result = mysqli_query($koneksi, $query);
-
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -29,14 +32,40 @@ $result = mysqli_query($koneksi, $query);
             <a href="../guru/index_guru.php">Guru</a>
             <a href="index_kelas.php" class="active">Kelas</a>
         </div>
+        <div class="navbar-right">
+            <?= render_navbar_user('../'); ?>
+        </div>
     </nav>
+
     <main class="main-container">
         <h1>Data Kelas</h1>
+
         <div class="card-table">
+            <?php if (isset($_GET['pesan'])): ?>
+                <?php if ($_GET['pesan'] === 'berhasil_tambah'): ?>
+                    <div class="alert alert-success">
+                        <i class="fa-solid fa-circle-check"></i> Data kelas berhasil ditambahkan!
+                    </div>
+                <?php elseif ($_GET['pesan'] === 'berhasil_edit'): ?>
+                    <div class="alert alert-success">
+                        <i class="fa-solid fa-circle-check"></i> Data kelas berhasil diperbarui!
+                    </div>
+                <?php elseif ($_GET['pesan'] === 'berhasil_hapus'): ?>
+                    <div class="alert alert-success">
+                        <i class="fa-solid fa-circle-check"></i> Data kelas berhasil dihapus!
+                    </div>
+                <?php elseif ($_GET['pesan'] === 'tidak_ditemukan'): ?>
+                    <div class="alert alert-error">
+                        <i class="fa-solid fa-circle-exclamation"></i> Data kelas tidak ditemukan!
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+
             <div class="header-table">
                 <h2>Daftar Kelas</h2>
                 <a href="tambah_kelas.php" class="btn btn-tambah"><i class="fa-solid fa-plus"></i> Tambah Data</a>
             </div>
+
             <table>
                 <thead>
                     <tr>
@@ -48,17 +77,17 @@ $result = mysqli_query($koneksi, $query);
                 </thead>
                 <tbody>
                     <?php
-                    if (mysqli_num_rows($result) > 0):
+                    if ($result && mysqli_num_rows($result) > 0):
                         $no = 1;
                         while ($row = mysqli_fetch_assoc($result)):
                     ?>
                             <tr>
                                 <td class="text-center"><?= $no++; ?></td>
-                                <td><?= htmlspecialchars($row['nama_kelas']) ?></td>
-                                <td><?= htmlspecialchars($row['tingkatan']) ?></td>
+                                <td><?= htmlspecialchars($row['nama_kelas']); ?></td>
+                                <td><?= htmlspecialchars($row['tingkatan']); ?></td>
                                 <td class="text-center">
-                                    <a href="edit_kelas.php?id_kelas=<?= $row['id_kelas'] ?>" class="btn btn-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
-                                    <a href="hapus_kelas.php?id_kelas=<?= $row['id_kelas'] ?>" class="btn btn-hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus data kelas ini?')"><i class="fa-solid fa-trash"></i> Hapus</a>
+                                    <a href="edit_kelas.php?id_kelas=<?= $row['id_kelas']; ?>" class="btn btn-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
+                                    <a href="hapus_kelas.php?id_kelas=<?= $row['id_kelas']; ?>" class="btn btn-hapus" onclick="return confirm('Apakah Anda yakin ingin menghapus data kelas ini?');"><i class="fa-solid fa-trash"></i> Hapus</a>
                                 </td>
                             </tr>
                         <?php endwhile; ?>
@@ -69,4 +98,8 @@ $result = mysqli_query($koneksi, $query);
                     <?php endif; ?>
                 </tbody>
             </table>
+        </div>
+    </main>
+
 </body>
+</html>

@@ -1,5 +1,10 @@
 <?php
 include '../koneksi.php';
+include '../auth.php';
+
+// Hanya Guru yang berhak menambah jadwal
+require_guru('../');
+
 $query_guru  = mysqli_query($koneksi, "SELECT * FROM guru ORDER BY nama_guru ASC");
 $query_kelas = mysqli_query($koneksi, "SELECT * FROM kelas ORDER BY nama_kelas ASC");
 
@@ -20,15 +25,16 @@ if (isset($_POST['submit'])) {
               FROM jadwal_lab j
               JOIN kelas k ON j.id_kelas = k.id_kelas
               WHERE LOWER(TRIM(j.ruang_lab)) = LOWER('$ruang_lab') 
-              AND LOWER(TRIM(j.hari)) = LOWER('$hari')";
+              AND LOWER(TRIM(j.hari)) = LOWER('$hari')
+              AND ('$jam_mulai' <= j.jam_selesai AND '$jam_selesai' >= j.jam_mulai)";
 
         $cek_bentrok = mysqli_query($koneksi, $query_cek);
         if (mysqli_num_rows($cek_bentrok) > 0) {
             $data_bentrok = mysqli_fetch_assoc($cek_bentrok);
             $pesan_error = "Jadwal bentrok! Ruang <b>" . htmlspecialchars($ruang_lab) . "</b> pada hari <b>" . htmlspecialchars($hari) . "</b> sudah terisi oleh kelas <b>" . htmlspecialchars($data_bentrok['nama_kelas']) . "</b> (Jam ke-" . $data_bentrok['jam_mulai'] . " s/d " . $data_bentrok['jam_selesai'] . ").";
         } else {
-            $query_simpan = "INSERT INTO jadwal_lab (id_guru, id_kelas, ruang_lab, hari, jam_mulai, jam_selesai) 
-                            VALUES ('$id_guru', '$id_kelas', '$ruang_lab', '$hari', '$jam_mulai', '$jam_selesai')";
+            $query_simpan = "INSERT INTO jadwal_lab (id_guru, id_kelas, ruang_lab, hari, jam_mulai, jam_selesai, jam_pelajaran) 
+                            VALUES ('$id_guru', '$id_kelas', '$ruang_lab', '$hari', '$jam_mulai', '$jam_selesai', 'Jam ke-$jam_mulai s/d $jam_selesai')";
             $simpan = mysqli_query($koneksi, $query_simpan);
 
             if ($simpan) {
@@ -65,6 +71,9 @@ if (isset($_POST['submit'])) {
             <a href="jadwal.php" class="active">Jadwal Lab</a>
             <a href="../guru/index_guru.php">Guru</a>
             <a href="../kelas/index_kelas.php">Kelas</a>
+        </div>
+        <div class="navbar-right">
+            <?= render_navbar_user('../'); ?>
         </div>
     </nav>
 
