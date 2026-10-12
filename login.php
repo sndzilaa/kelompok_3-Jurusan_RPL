@@ -165,9 +165,10 @@ if (isset($_POST['login'])) {
             pointer-events: none;
         }
 
-        .input-wrapper input {
+        form .input-wrapper input[type="text"],
+        form .input-wrapper input[type="password"] {
             width: 100%;
-            padding: 12px 14px 12px 42px;
+            padding: 12px 14px 12px 48px;
             border: 1.5px solid #cbd5e1;
             border-radius: 10px;
             font-size: 14px;
@@ -177,7 +178,12 @@ if (isset($_POST['login'])) {
             color: #0f172a;
         }
 
-        .input-wrapper input:focus {
+        form .input-wrapper input[type="password"] {
+            padding-right: 42px;
+        }
+
+        form .input-wrapper input[type="text"]:focus,
+        form .input-wrapper input[type="password"]:focus {
             background: #ffffff;
             border-color: #2563eb;
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
@@ -223,70 +229,6 @@ if (isset($_POST['login'])) {
             box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
         }
 
-        .quick-demo-box {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px dashed #e2e8f0;
-            text-align: center;
-        }
-
-        .quick-demo-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            color: #64748b;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .quick-demo-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-demo {
-            flex: 1;
-            padding: 10px 8px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border: 1px solid transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-demo-guru {
-            background-color: #f0fdf4;
-            color: #166534;
-            border-color: #bbf7d0;
-        }
-
-        .btn-demo-guru:hover {
-            background-color: #dcfce7;
-            border-color: #86efac;
-        }
-
-        .btn-demo-siswa {
-            background-color: #eff6ff;
-            color: #1e40af;
-            border-color: #bfdbfe;
-        }
-
-        .btn-demo-siswa:hover {
-            background-color: #dbeafe;
-            border-color: #93c5fd;
-        }
-
-        .demo-credentials-note {
-            font-size: 11px;
-            color: #94a3b8;
-            margin-top: 12px;
-            line-height: 1.4;
-        }
     </style>
 </head>
 
@@ -341,20 +283,6 @@ if (isset($_POST['login'])) {
                 </button>
             </form>
 
-            <div class="quick-demo-box">
-                <div class="quick-demo-title">Akses Cepat Pengujian</div>
-                <div class="quick-demo-buttons">
-                    <button type="button" class="btn-demo btn-demo-guru" onclick="setDemo('guru', 'guru123')">
-                        <i class="fa-solid fa-user-tie"></i> Akun Guru
-                    </button>
-                    <button type="button" class="btn-demo btn-demo-siswa" onclick="setDemo('siswa', 'siswa123')">
-                        <i class="fa-solid fa-graduation-cap"></i> Akun Siswa
-                    </button>
-                </div>
-                <div class="demo-credentials-note">
-                    Guru: <b>guru</b> (pass: <i>guru123</i>) &bull; Siswa: <b>siswa</b> (pass: <i>siswa123</i>)
-                </div>
-            </div>
         </div>
     </div>
 
@@ -376,12 +304,6 @@ if (isset($_POST['login'])) {
             }
         });
 
-        // Fitur akses cepat demo akun
-        function setDemo(username, password) {
-            document.getElementById('username').value = username;
-            document.getElementById('password').value = password;
-            document.getElementById('loginForm').submit();
-        }
     </script>
 </body>
 
