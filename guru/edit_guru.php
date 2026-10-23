@@ -20,6 +20,8 @@ if (isset($_POST['submit'])) {
 
     if (empty($nama_guru) || empty($mata_pelajaran)) {
         $pesan_error = "Semua kolom wajib diisi!";
+    } elseif (preg_match('/^[\p{L}\p{M} ]+$/u', $nama_guru) !== 1) {
+        $pesan_error = "Nama guru hanya boleh berisi huruf dan spasi.";
     } else {
         $query_update = "UPDATE guru SET nama_guru = '$nama_guru', mata_pelajaran = '$mata_pelajaran' WHERE id_guru = '$id_guru'";
         $update = mysqli_query($koneksi, $query_update);
@@ -70,6 +72,8 @@ if (!empty($guru['mata_pelajaran']) && !in_array($guru['mata_pelajaran'], $dafta
     <title>Edit Data Guru - SIM-LAB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../loading.css">
+    <script src="../loading.js" defer></script>
 </head>
 
 <body>
@@ -110,7 +114,7 @@ if (!empty($guru['mata_pelajaran']) && !in_array($guru['mata_pelajaran'], $dafta
 
                 <div style="margin-bottom: 18px;">
                     <label for="nama_guru">Nama Guru:</label>
-                    <input type="text" id="nama_guru" name="nama_guru" value="<?= htmlspecialchars($guru['nama_guru']); ?>" placeholder="Masukkan nama guru" required>
+                    <input type="text" id="nama_guru" name="nama_guru" value="<?= htmlspecialchars($nama_guru ?? $guru['nama_guru']); ?>" placeholder="Masukkan nama guru" title="Nama hanya boleh berisi huruf dan spasi." oninput="this.value = this.value.replace(/[^\p{L}\p{M} ]/gu, '')" required>
                 </div>
 
                 <div style="margin-bottom: 24px;">

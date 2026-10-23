@@ -8,10 +8,13 @@ if (is_logged_in()) {
 
 $error = '';
 $pesan_sukses = '';
+$isDaftar = isset($_GET['daftar']);
 
 if (isset($_GET['pesan'])) {
     if ($_GET['pesan'] === 'logout') {
         $pesan_sukses = "Anda telah berhasil keluar dari SIM-LAB.";
+    } elseif ($_GET['pesan'] === 'daftar_berhasil') {
+        $pesan_sukses = "Pendaftaran berhasil. Silakan masuk dengan akun baru Anda.";
     } elseif ($_GET['pesan'] === 'harus_login') {
         $error = "Silakan login terlebih dahulu untuk mengakses sistem SIM-LAB.";
     } elseif ($_GET['pesan'] === 'akses_ditolak') {
@@ -19,7 +22,68 @@ if (isset($_GET['pesan'])) {
     }
 }
 
-if (isset($_POST['login'])) {
+if (isset($_POST['daftar'])) {
+    $nama_lengkap = trim($_POST['nama_lengkap'] ?? '');
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $konfirmasi_password = $_POST['konfirmasi_password'] ?? '';
+    $isDaftar = true;
+
+    if ($nama_lengkap === '' || $username === '' || $password === '' || $konfirmasi_password === '') {
+        $error = "Semua kolom wajib diisi!";
+    } elseif (preg_match('/.{101}/us', $nama_lengkap) === 1 || preg_match('/[0-9]/', $nama_lengkap)) {
+        $error = "Nama lengkap maksimal 100 karakter dan tidak boleh mengandung angka.";
+    } elseif (preg_match('/.{51}/us', $username) === 1) {
+        $error = "Username maksimal 50 karakter.";
+    } elseif (strlen($password) < 8) {
+        $error = "Password harus terdiri dari minimal 8 karakter.";
+    } elseif ($password !== $konfirmasi_password) {
+        $error = "Konfirmasi password tidak sesuai.";
+    } else {
+        $stmt = mysqli_prepare($koneksi, "SELECT id_user FROM users WHERE username = ? LIMIT 1");
+        if (!$stmt) {
+            error_log("Gagal menyiapkan pemeriksaan username: " . mysqli_error($koneksi));
+            $error = "Pendaftaran belum dapat diproses. Silakan coba lagi.";
+        } else {
+            mysqli_stmt_bind_param($stmt, "s", $username);
+            if (!mysqli_stmt_execute($stmt) || !mysqli_stmt_store_result($stmt)) {
+                error_log("Gagal memeriksa username: " . mysqli_stmt_error($stmt));
+                $error = "Pendaftaran belum dapat diproses. Silakan coba lagi.";
+                mysqli_stmt_close($stmt);
+            } else {
+                $username_tersedia = mysqli_stmt_num_rows($stmt) === 0;
+                mysqli_stmt_close($stmt);
+
+                if (!$username_tersedia) {
+                    $error = "Username sudah digunakan. Silakan pilih username lain.";
+                } else {
+                    $stmt = mysqli_prepare($koneksi, "INSERT INTO users (username, password, nama_lengkap, role) VALUES (?, ?, ?, 'siswa')");
+                    if (!$stmt) {
+                        error_log("Gagal menyiapkan pendaftaran akun: " . mysqli_error($koneksi));
+                        $error = "Pendaftaran belum dapat diproses. Silakan coba lagi.";
+                    } else {
+                        $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                        mysqli_stmt_bind_param($stmt, "sss", $username, $password_hash, $nama_lengkap);
+
+                        if (mysqli_stmt_execute($stmt)) {
+                            mysqli_stmt_close($stmt);
+                            header("Location: login.php?pesan=daftar_berhasil");
+                            exit();
+                        }
+
+                        if (mysqli_stmt_errno($stmt) === 1062) {
+                            $error = "Username sudah digunakan. Silakan pilih username lain.";
+                        } else {
+                            error_log("Gagal menyimpan akun baru: " . mysqli_stmt_error($stmt));
+                            $error = "Pendaftaran belum dapat diproses. Silakan coba lagi.";
+                        }
+                        mysqli_stmt_close($stmt);
+                    }
+                }
+            }
+        }
+    }
+} elseif (isset($_POST['login'])) {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
 
@@ -66,6 +130,8 @@ if (isset($_POST['login'])) {
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="loading.css">
+    <script src="loading.js" defer></script>
     <style>
         body.login-page {
             min-height: 100vh;
@@ -229,6 +295,23 @@ if (isset($_POST['login'])) {
             box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
         }
 
+        .register-link {
+            margin: 20px 0 0;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
     </style>
 </head>
 
@@ -239,8 +322,8 @@ if (isset($_POST['login'])) {
             <div class="brand-logo">
                 <i class="fa-solid fa-computer"></i>
             </div>
-            <h1>SIM-LAB</h1>
-            <p>Sistem Informasi Manajemen Laboratorium RPL</p>
+            <h1><?= $isDaftar ? 'Buat Akun' : 'SIM-LAB'; ?></h1>
+            <p><?= $isDaftar ? 'Daftar sebagai siswa untuk menggunakan SIM-LAB' : 'Sistem Informasi Manajemen Laboratorium RPL'; ?></p>
         </div>
 
         <div class="login-body">
@@ -258,6 +341,46 @@ if (isset($_POST['login'])) {
                 </div>
             <?php endif; ?>
 
+            <?php if ($isDaftar): ?>
+                <form action="login.php?daftar=1" method="POST" id="registerForm">
+                    <div class="input-group">
+                        <label for="nama_lengkap">Nama Lengkap</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-id-card field-icon"></i>
+                            <input type="text" id="nama_lengkap" name="nama_lengkap" placeholder="Masukkan nama lengkap" maxlength="100" required autocomplete="name" value="<?= htmlspecialchars($_POST['nama_lengkap'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="username">Username</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-user field-icon"></i>
+                            <input type="text" id="username" name="username" placeholder="Buat username" maxlength="50" required autocomplete="username" value="<?= htmlspecialchars($_POST['username'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock field-icon"></i>
+                            <input type="password" id="password" name="password" placeholder="Minimal 8 karakter" required minlength="8" autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="konfirmasi_password">Konfirmasi Password</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock field-icon"></i>
+                            <input type="password" id="konfirmasi_password" name="konfirmasi_password" placeholder="Ulangi password" required minlength="8" autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <button type="submit" name="daftar" class="btn-submit">
+                        <i class="fa-solid fa-user-plus"></i> Daftar
+                    </button>
+                </form>
+                <p class="register-link">Sudah punya akun? <a href="login.php">Masuk</a></p>
+            <?php else: ?>
             <form action="login.php" method="POST" id="loginForm">
                 <div class="input-group">
                     <label for="username">Username</label>
@@ -282,6 +405,8 @@ if (isset($_POST['login'])) {
                     <i class="fa-solid fa-right-to-bracket"></i> Masuk ke Sistem
                 </button>
             </form>
+            <p class="register-link">Belum punya akun? <a href="login.php?daftar=1">Daftar sekarang</a></p>
+            <?php endif; ?>
 
         </div>
     </div>
@@ -289,20 +414,22 @@ if (isset($_POST['login'])) {
     <script>
         // Toggle lihat password
         const btnTogglePassword = document.getElementById('btnTogglePassword');
-        const passwordInput = document.getElementById('password');
-        const toggleEyeIcon = document.getElementById('toggleEyeIcon');
+        if (btnTogglePassword) {
+            const passwordInput = document.getElementById('password');
+            const toggleEyeIcon = document.getElementById('toggleEyeIcon');
 
-        btnTogglePassword.addEventListener('click', function () {
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleEyeIcon.classList.remove('fa-eye');
-                toggleEyeIcon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                toggleEyeIcon.classList.remove('fa-eye-slash');
-                toggleEyeIcon.classList.add('fa-eye');
-            }
-        });
+            btnTogglePassword.addEventListener('click', function () {
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleEyeIcon.classList.remove('fa-eye');
+                    toggleEyeIcon.classList.add('fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    toggleEyeIcon.classList.remove('fa-eye-slash');
+                    toggleEyeIcon.classList.add('fa-eye');
+                }
+            });
+        }
 
     </script>
 </body>

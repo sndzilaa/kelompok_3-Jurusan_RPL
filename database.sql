@@ -8,13 +8,15 @@ CREATE TABLE IF NOT EXISTS `users` (
   `nama_lengkap` VARCHAR(100) NOT NULL,
   `role` ENUM('guru', 'siswa') NOT NULL DEFAULT 'siswa',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_user`)
+  PRIMARY KEY (`id_user`),
+  CONSTRAINT `chk_users_siswa_nama_tanpa_angka`
+    CHECK (`role` <> 'siswa' OR `nama_lengkap` NOT REGEXP '[0-9]')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabel guru
 CREATE TABLE IF NOT EXISTS `guru` (
   `id_guru` INT(11) NOT NULL AUTO_INCREMENT,
-  `nama_guru` VARCHAR(80) NOT NULL,
+  `nama_guru` TEXT(80) NOT NULL,
   `mata_pelajaran` VARCHAR(80) NOT NULL,
   PRIMARY KEY (`id_guru`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

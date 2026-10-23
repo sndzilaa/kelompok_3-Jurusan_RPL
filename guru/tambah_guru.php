@@ -4,17 +4,28 @@ include '../auth.php';
 
 require_guru('../');
 
-if (isset($_POST['submit'])) {
-    $nama_guru      = $_POST['nama_guru'];
-    $mata_pelajaran = $_POST['mata_pelajaran'];
-    $query  = "INSERT INTO guru (nama_guru, mata_pelajaran) VALUES ('$nama_guru', '$mata_pelajaran')";
-    $simpan = mysqli_query($koneksi, $query);
+$pesan_error = '';
+$nama_guru = '';
+$mata_pelajaran = '';
 
-    if ($simpan) {
-        header("Location: index_guru.php?pesan=berhasil_tambah");
-        exit();
+if (isset($_POST['submit'])) {
+    $nama_guru = trim($_POST['nama_guru'] ?? '');
+    $mata_pelajaran = trim($_POST['mata_pelajaran'] ?? '');
+
+    if ($nama_guru === '' || $mata_pelajaran === '') {
+        $pesan_error = "Semua kolom wajib diisi!";
+    } elseif (preg_match('/^[\p{L}\p{M} ]+$/u', $nama_guru) !== 1) {
+        $pesan_error = "Nama guru hanya boleh berisi huruf dan spasi.";
     } else {
-        echo "Gagal menyimpan data guru: " . mysqli_error($koneksi);
+        $stmt = mysqli_prepare($koneksi, "INSERT INTO guru (nama_guru, mata_pelajaran) VALUES (?, ?)");
+        mysqli_stmt_bind_param($stmt, "ss", $nama_guru, $mata_pelajaran);
+
+        if (mysqli_stmt_execute($stmt)) {
+            header("Location: index_guru.php?pesan=berhasil_tambah");
+            exit();
+        }
+
+        $pesan_error = "Gagal menyimpan data guru: " . mysqli_stmt_error($stmt);
     }
 }
 ?>
@@ -28,6 +39,8 @@ if (isset($_POST['submit'])) {
     <title>Tambah Data Guru - SIM-LAB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../loading.css">
+    <script src="../loading.js" defer></script>
 </head>
 
 <body>
@@ -57,10 +70,16 @@ if (isset($_POST['submit'])) {
                 </a>
             </div>
 
+            <?php if ($pesan_error !== ''): ?>
+                <div class="alert alert-error">
+                    <i class="fa-solid fa-circle-exclamation"></i> <?= htmlspecialchars($pesan_error); ?>
+                </div>
+            <?php endif; ?>
+
             <form action="" method="POST" style="margin-top: 20px;">
                 <div style="margin-bottom: 15px;">
                     <label for="nama_guru">Nama Guru:</label>
-                    <input type="text" id="nama_guru" name="nama_guru" placeholder="Masukkan nama guru" required>
+                    <input type="text" id="nama_guru" name="nama_guru" value="<?= htmlspecialchars($nama_guru); ?>" placeholder="Masukkan nama guru" title="Nama hanya boleh berisi huruf dan spasi." oninput="this.value = this.value.replace(/[^\p{L}\p{M} ]/gu, '')" required>
                 </div>
 
                 <div style="margin-bottom: 20px;">
