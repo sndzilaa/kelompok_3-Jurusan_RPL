@@ -8,7 +8,7 @@ require_login();
 $user = get_logged_in_user();
 $isGuru = is_guru();
 
-$query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, k.tingkatan, j.ruang_lab, j.hari, j.jam_mulai, j.jam_selesai 
+$query = "SELECT j.id_jadwal, g.nama_guru, g.mata_pelajaran, k.nama_kelas, k.tingkatan, j.ruang_lab, j.hari, j.jam_mulai, j.jam_selesai, j.waktu_mulai, j.waktu_selesai
           FROM jadwal_lab j
           JOIN guru g ON j.id_guru = g.id_guru
           JOIN kelas k ON j.id_kelas = k.id_kelas
@@ -31,6 +31,7 @@ $result = mysqli_query($koneksi, $query);
     <!-- FontAwesome Font Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="background.css">
     <link rel="stylesheet" href="loading.css">
     <script src="loading.js" defer></script>
 </head>
@@ -45,10 +46,12 @@ $result = mysqli_query($koneksi, $query);
         <div class="navbar-links">
             <a href="index.php" class="active">Home</a>
             <a href="jadwal lab/jadwal.php">Jadwal Lab</a>
+            <a href="jadwal lab/durasi.php">Durasi Lab</a>
             <?php if ($isGuru): ?>
                 <a href="guru/index_guru.php">Guru</a>
                 <a href="kelas/index_kelas.php">Kelas</a>
             <?php endif; ?>
+            <a href="about.php">About</a>
         </div>
         <div class="navbar-right">
             <?= render_navbar_user(''); ?>
@@ -74,6 +77,9 @@ $result = mysqli_query($koneksi, $query);
             </p>
             <a href="jadwal lab/jadwal.php" class="btn-hero">
                 <i class="fa-solid fa-calendar-days"></i> <?= $isGuru ? 'Kelola Jadwal Lab' : 'Lihat Jadwal Lab'; ?>
+            </a>
+            <a href="jadwal lab/durasi.php" class="btn-hero">
+                <i class="fa-solid fa-hourglass-half"></i> Lihat Durasi Lab
             </a>
         </div>
 
@@ -102,6 +108,7 @@ $result = mysqli_query($koneksi, $query);
                         <th>Ruang Lab</th>
                         <th>Hari</th>
                         <th>Jam Pelajaran</th>
+                        <th>Waktu</th>
                         <?php if ($isGuru): ?>
                             <th class="text-center">Aksi</th>
                         <?php endif; ?>
@@ -122,6 +129,7 @@ $result = mysqli_query($koneksi, $query);
                                 <td><?= htmlspecialchars($row['ruang_lab']); ?></td>
                                 <td><?= htmlspecialchars($row['hari']); ?></td>
                                 <td>Jam ke-<?= htmlspecialchars($row['jam_mulai']); ?> s/d <?= htmlspecialchars($row['jam_selesai']); ?></td>
+                                <td><?= $row['waktu_mulai'] && $row['waktu_selesai'] ? htmlspecialchars(substr($row['waktu_mulai'], 0, 5) . ' - ' . substr($row['waktu_selesai'], 0, 5)) : 'Belum ditentukan'; ?></td>
                                 <?php if ($isGuru): ?>
                                     <td class="text-center">
                                         <a href="jadwal lab/edit_jadwal.php?id_jadwal=<?= $row['id_jadwal']; ?>" class="btn btn-edit"><i class="fa-solid fa-pen-to-square"></i> Edit</a>
@@ -132,7 +140,7 @@ $result = mysqli_query($koneksi, $query);
                         <?php endwhile; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="<?= $isGuru ? '9' : '8'; ?>" class="text-center">Belum ada data jadwal lab.</td>
+                            <td colspan="<?= $isGuru ? '10' : '9'; ?>" class="text-center">Belum ada data jadwal lab.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

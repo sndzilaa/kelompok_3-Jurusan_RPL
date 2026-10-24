@@ -1,0 +1,15 @@
+body:not(.login-page) {
+    position: relative;
+    isolation: isolate;
+}
+
+body:not(.login-page)::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url("background-icons.svg");
+    background-repeat: repeat;
+    background-size: 190px 190px;
+    pointer-events: none;
+}

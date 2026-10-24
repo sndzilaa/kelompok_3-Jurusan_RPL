@@ -408,6 +408,7 @@ if (isset($_POST['daftar'])) {
             <p class="register-link">Belum punya akun? <a href="login.php?daftar=1">Daftar sekarang</a></p>
             <?php endif; ?>
 
+            <p class="register-link"><a href="about.php">Tentang tim pembuat SIM-LAB</a></p>
         </div>
     </div>
 

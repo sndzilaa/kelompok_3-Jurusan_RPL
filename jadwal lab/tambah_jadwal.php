@@ -17,9 +17,16 @@ if (isset($_POST['submit'])) {
     $hari        = trim($_POST['hari']);
     $jam_mulai   = (int)$_POST['jam_mulai'];
     $jam_selesai = (int)$_POST['jam_selesai'];
+    $waktu_mulai = trim($_POST['waktu_mulai'] ?? '');
+    $waktu_selesai = trim($_POST['waktu_selesai'] ?? '');
 
-    if ($jam_selesai < $jam_mulai) {
+    if (!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $waktu_mulai) ||
+        !preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $waktu_selesai)) {
+        $pesan_error = "Waktu mulai dan selesai harus diisi dengan format jam yang valid.";
+    } elseif ($jam_selesai < $jam_mulai) {
         $pesan_error = "Jam selesai tidak boleh lebih awal dari jam mulai!";
+    } elseif ($waktu_selesai <= $waktu_mulai) {
+        $pesan_error = "Waktu selesai harus lebih akhir dari waktu mulai!";
     } else {
         $query_cek = "SELECT j.*, k.nama_kelas 
               FROM jadwal_lab j
@@ -33,15 +40,32 @@ if (isset($_POST['submit'])) {
             $data_bentrok = mysqli_fetch_assoc($cek_bentrok);
             $pesan_error = "Jadwal bentrok! Ruang <b>" . htmlspecialchars($ruang_lab) . "</b> pada hari <b>" . htmlspecialchars($hari) . "</b> sudah terisi oleh kelas <b>" . htmlspecialchars($data_bentrok['nama_kelas']) . "</b> (Jam ke-" . $data_bentrok['jam_mulai'] . " s/d " . $data_bentrok['jam_selesai'] . ").";
         } else {
-            $query_simpan = "INSERT INTO jadwal_lab (id_guru, id_kelas, ruang_lab, hari, jam_mulai, jam_selesai, jam_pelajaran) 
-                            VALUES ('$id_guru', '$id_kelas', '$ruang_lab', '$hari', '$jam_mulai', '$jam_selesai', 'Jam ke-$jam_mulai s/d $jam_selesai')";
-            $simpan = mysqli_query($koneksi, $query_simpan);
+            $jam_pelajaran = "Jam ke-$jam_mulai s/d $jam_selesai";
+            $stmt_simpan = mysqli_prepare(
+                $koneksi,
+                "INSERT INTO jadwal_lab (id_guru, id_kelas, ruang_lab, hari, jam_mulai, jam_selesai, jam_pelajaran, waktu_mulai, waktu_selesai)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+            );
+            mysqli_stmt_bind_param(
+                $stmt_simpan,
+                "iissiisss",
+                $id_guru,
+                $id_kelas,
+                $ruang_lab,
+                $hari,
+                $jam_mulai,
+                $jam_selesai,
+                $jam_pelajaran,
+                $waktu_mulai,
+                $waktu_selesai
+            );
+            $simpan = mysqli_stmt_execute($stmt_simpan);
 
             if ($simpan) {
                 header("Location: ../index.php");
                 exit();
             } else {
-                $pesan_error = "Gagal menyimpan jadwal: " . mysqli_error($koneksi);
+                $pesan_error = "Gagal menyimpan jadwal: " . mysqli_stmt_error($stmt_simpan);
             }
         }
     }
@@ -57,6 +81,7 @@ if (isset($_POST['submit'])) {
     <title>Tambah Jadwal Lab - SIM-LAB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../background.css">
     <link rel="stylesheet" href="../loading.css">
     <script src="../loading.js" defer></script>
 </head>
@@ -71,8 +96,10 @@ if (isset($_POST['submit'])) {
         <div class="navbar-links">
             <a href="../index.php">Home</a>
             <a href="jadwal.php" class="active">Jadwal Lab</a>
+            <a href="durasi.php">Durasi Lab</a>
             <a href="../guru/index_guru.php">Guru</a>
             <a href="../kelas/index_kelas.php">Kelas</a>
+            <a href="../about.php">About</a>
         </div>
         <div class="navbar-right">
             <?= render_navbar_user('../'); ?>
@@ -155,6 +182,17 @@ if (isset($_POST['submit'])) {
                                 <option value="<?= $i; ?>">Jam Ke-<?= $i; ?></option>
                             <?php endfor; ?>
                         </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <div style="flex: 1;">
+                        <label for="waktu_mulai">Waktu Mulai:</label>
+                        <input type="time" id="waktu_mulai" name="waktu_mulai" required value="<?= htmlspecialchars($_POST['waktu_mulai'] ?? ''); ?>">
+                    </div>
+                    <div style="flex: 1;">
+                        <label for="waktu_selesai">Waktu Selesai:</label>
+                        <input type="time" id="waktu_selesai" name="waktu_selesai" required value="<?= htmlspecialchars($_POST['waktu_selesai'] ?? ''); ?>">
                     </div>
                 </div>
 

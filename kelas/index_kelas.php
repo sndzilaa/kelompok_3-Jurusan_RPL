@@ -18,6 +18,7 @@ $result = mysqli_query($koneksi, $query);
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../background.css">
     <link rel="stylesheet" href="../loading.css">
     <script src="../loading.js" defer></script>
 </head>
@@ -31,8 +32,10 @@ $result = mysqli_query($koneksi, $query);
         <div class="navbar-links">
             <a href="../index.php">Home</a>
             <a href="../jadwal lab/jadwal.php">Jadwal Lab</a>
+            <a href="../jadwal lab/durasi.php">Durasi Lab</a>
             <a href="../guru/index_guru.php">Guru</a>
             <a href="index_kelas.php" class="active">Kelas</a>
+            <a href="../about.php">About</a>
         </div>
         <div class="navbar-right">
             <?= render_navbar_user('../'); ?>

@@ -39,6 +39,7 @@ if (isset($_POST['submit'])) {
     <title>Tambah Data Guru - SIM-LAB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../background.css">
     <link rel="stylesheet" href="../loading.css">
     <script src="../loading.js" defer></script>
 </head>
@@ -53,8 +54,10 @@ if (isset($_POST['submit'])) {
         <div class="navbar-links">
             <a href="../index.php">Home</a>
             <a href="../jadwal lab/jadwal.php">Jadwal Lab</a>
+            <a href="../jadwal lab/durasi.php">Durasi Lab</a>
             <a href="index_guru.php" class="active">Guru</a>
             <a href="../kelas/index_kelas.php">Kelas</a>
+            <a href="../about.php">About</a>
         </div>
         <div class="navbar-right">
             <?= render_navbar_user('../'); ?>

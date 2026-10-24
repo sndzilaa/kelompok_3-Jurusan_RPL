@@ -48,11 +48,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hari        = trim($_POST['hari'] ?? '');
     $jam_mulai   = intval($_POST['jam_mulai'] ?? 0);
     $jam_selesai = intval($_POST['jam_selesai'] ?? 0);
+    $waktu_mulai = trim($_POST['waktu_mulai'] ?? '');
+    $waktu_selesai = trim($_POST['waktu_selesai'] ?? '');
 
     if (empty($id_guru) || empty($id_kelas) || empty($ruang_lab) || empty($hari) || empty($jam_mulai) || empty($jam_selesai)) {
         $error = "Semua kolom wajib diisi!";
+    } elseif (!preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $waktu_mulai) ||
+        !preg_match('/^(?:[01]\d|2[0-3]):[0-5]\d$/', $waktu_selesai)) {
+        $error = "Waktu mulai dan selesai harus diisi dengan format jam yang valid.";
     } elseif ($jam_selesai < $jam_mulai) {
         $error = "Jam selesai tidak boleh lebih awal dari jam mulai!";
+    } elseif ($waktu_selesai <= $waktu_mulai) {
+        $error = "Waktu selesai harus lebih akhir dari waktu mulai!";
     } else {
         // Cek bentrok dengan jadwal lain di ruang dan hari yang sama
         $query_cek = "SELECT j.*, k.nama_kelas 
@@ -69,8 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "Jadwal bentrok! Ruang <b>" . htmlspecialchars($ruang_lab) . "</b> pada hari <b>" . htmlspecialchars($hari) . "</b> sudah terisi oleh kelas <b>" . htmlspecialchars($data_bentrok['nama_kelas']) . "</b> (Jam ke-" . $data_bentrok['jam_mulai'] . " s/d " . $data_bentrok['jam_selesai'] . ").";
         } else {
             $jam_pelajaran = "Jam ke-$jam_mulai s/d $jam_selesai";
-            $stmt_update = mysqli_prepare($koneksi, "UPDATE jadwal_lab SET id_kelas = ?, id_guru = ?, ruang_lab = ?, hari = ?, jam_mulai = ?, jam_selesai = ?, jam_pelajaran = ? WHERE id_jadwal = ?");
-            mysqli_stmt_bind_param($stmt_update, "iississi", $id_kelas, $id_guru, $ruang_lab, $hari, $jam_mulai, $jam_selesai, $jam_pelajaran, $id);
+            $stmt_update = mysqli_prepare($koneksi, "UPDATE jadwal_lab SET id_kelas = ?, id_guru = ?, ruang_lab = ?, hari = ?, jam_mulai = ?, jam_selesai = ?, jam_pelajaran = ?, waktu_mulai = ?, waktu_selesai = ? WHERE id_jadwal = ?");
+            mysqli_stmt_bind_param($stmt_update, "iissiisssi", $id_kelas, $id_guru, $ruang_lab, $hari, $jam_mulai, $jam_selesai, $jam_pelajaran, $waktu_mulai, $waktu_selesai, $id);
 
             if (mysqli_stmt_execute($stmt_update)) {
                 header("Location: jadwal.php?status=sukses_edit");
@@ -94,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../background.css">
     <link rel="stylesheet" href="../loading.css">
     <script src="../loading.js" defer></script>
 </head>
@@ -107,8 +115,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="navbar-links">
             <a href="../index.php">Home</a>
             <a href="jadwal.php" class="active">Jadwal Lab</a>
+            <a href="durasi.php">Durasi Lab</a>
             <a href="../guru/index_guru.php">Guru</a>
             <a href="../kelas/index_kelas.php">Kelas</a>
+            <a href="../about.php">About</a>
         </div>
         <div class="navbar-right">
             <?= render_navbar_user('../'); ?>
@@ -202,6 +212,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <option value="<?= $i; ?>" <?= ($jadwal['jam_mulai'] == $i) ? 'selected' : ''; ?>>Jam Ke-<?= $i; ?></option>
                             <?php endfor; ?>
                         </select>
+                    </div>
+
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                        <div style="flex: 1;">
+                            <label for="waktu_mulai">Waktu Mulai:</label>
+                            <input type="time" id="waktu_mulai" name="waktu_mulai" required value="<?= htmlspecialchars($_POST['waktu_mulai'] ?? $jadwal['waktu_mulai'] ?? ''); ?>">
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="waktu_selesai">Waktu Selesai:</label>
+                            <input type="time" id="waktu_selesai" name="waktu_selesai" required value="<?= htmlspecialchars($_POST['waktu_selesai'] ?? $jadwal['waktu_selesai'] ?? ''); ?>">
+                        </div>
                     </div>
 
                     <div style="flex: 1;">

@@ -56,6 +56,7 @@ $daftar_tingkatan = ["X", "XI", "XII"];
     <title>Edit Data Kelas - SIM-LAB</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../background.css">
     <link rel="stylesheet" href="../loading.css">
     <script src="../loading.js" defer></script>
 </head>
@@ -70,8 +71,10 @@ $daftar_tingkatan = ["X", "XI", "XII"];
         <div class="navbar-links">
             <a href="../index.php">Home</a>
             <a href="../jadwal lab/jadwal.php">Jadwal Lab</a>
+            <a href="../jadwal lab/durasi.php">Durasi Lab</a>
             <a href="../guru/index_guru.php">Guru</a>
             <a href="index_kelas.php" class="active">Kelas</a>
+            <a href="../about.php">About</a>
         </div>
         <div class="navbar-right">
             <?= render_navbar_user('../'); ?>

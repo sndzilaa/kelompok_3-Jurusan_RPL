@@ -1,6 +1,11 @@
 -- Database: miniprojekdb
 -- Skrip Database SIM-LAB Lengkap
 
+CREATE DATABASE IF NOT EXISTS `miniprojekdb`
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+USE `miniprojekdb`;
+
 CREATE TABLE IF NOT EXISTS `users` (
   `id_user` INT(11) NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(50) NOT NULL UNIQUE,
@@ -39,8 +44,41 @@ CREATE TABLE IF NOT EXISTS `jadwal_lab` (
   `jam_mulai` INT(11) NOT NULL DEFAULT 1,
   `jam_selesai` INT(11) NOT NULL DEFAULT 2,
   `jam_pelajaran` VARCHAR(90) DEFAULT '',
+  `waktu_mulai` TIME DEFAULT NULL,
+  `waktu_selesai` TIME DEFAULT NULL,
   PRIMARY KEY (`id_jadwal`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Tambahkan kolom waktu pada database lama tanpa menggandakan kolom yang sudah ada.
+SET @has_waktu_mulai = (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'jadwal_lab'
+    AND COLUMN_NAME = 'waktu_mulai'
+);
+SET @sql = IF(
+  @has_waktu_mulai = 0,
+  'ALTER TABLE `jadwal_lab` ADD COLUMN `waktu_mulai` TIME DEFAULT NULL',
+  'SELECT 1'
+);
+PREPARE migration FROM @sql;
+EXECUTE migration;
+DEALLOCATE PREPARE migration;
+
+SET @has_waktu_selesai = (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'jadwal_lab'
+    AND COLUMN_NAME = 'waktu_selesai'
+);
+SET @sql = IF(
+  @has_waktu_selesai = 0,
+  'ALTER TABLE `jadwal_lab` ADD COLUMN `waktu_selesai` TIME DEFAULT NULL',
+  'SELECT 1'
+);
+PREPARE migration FROM @sql;
+EXECUTE migration;
+DEALLOCATE PREPARE migration;
 
 -- Akun Default:
 -- 1. Guru: username 'guru', password 'guru123'
